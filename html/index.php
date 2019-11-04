@@ -6,17 +6,17 @@
 <html>
 
 <head>
-  <title>Data Server</title>
+  <title>AirBeam</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <h1>Welcome to the Data Server</h1>
-  <p><a style="font-size: x-large; font-weight: bold;" href="output.csv">Data File</a></p>
-  <p><button onclick="start()">Start Data Logger</button></p>
-  <p><button onclick="stop()">Stop Data Logger</button></p>
-  <p><button onclick="clear_data()">Clear Data</button></p>
-  <p><button onclick="start_shutdown()">Shutdown</button></p>
+  <h1>AirBeam Data Logger</h1>
+  <p><button id="start">Start Data Logger</button></p>
+  <p><button id="stop" disabled>Stop Data Logger</button></p>
+  <p><button id="clear" disabled>Clear Data</button></p>
+  <p><button id="shutdown">Shutdown</button></p>
+
   <form id="settings">
     <p>
       <input id="delay" type="number" max="1440" min="1" value="<?php echo($settings["delay"] / 60) ?>">
@@ -33,7 +33,10 @@
       Enable NTP time sync.
     </p>
   </form>
-<script src="jquery.min.js"></script>
-<script src="script.js"></script>
+
+  <p><a href="output.csv">Data File</a></p>
+
+  <script src="jquery.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

@@ -90,8 +90,12 @@ $(function () {
   }
 
   // Disable form submission, it's all handled via JavaScript.
-  $("#settings").submit(function (e) {
+  $('#settings').submit(function (e) {
     e.preventDefault();
     return false;
+  });
+
+  $('#start').on('click', () => {
+    console.log('click');
   });
 });
