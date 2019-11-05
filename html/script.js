@@ -112,9 +112,8 @@ $(function () {
     }
   }
 
-  const updateChart = (data) => {
+  const updateChart = (rawData) => {
     const svg = d3.select("svg");
-
 
     const margin = {
       top: 20,
@@ -130,7 +129,7 @@ $(function () {
     const parseTime = d3.timeParse("%Y/%m/%d %H:%M:%S");
 
     // prep data
-    const processedData = data.map((d) => {
+    const data = rawData.map((d) => {
       const celsius = parseInt(d['Temperature (C)']);
       return {
         celsius,
@@ -145,11 +144,11 @@ $(function () {
     });
 
     const x = d3.scaleUtc()
-      .domain(d3.extent(processedData, d => d.date))
+      .domain(d3.extent(data, d => d.date))
       .range([margin.left, width - margin.right]);
 
     const y = d3.scaleLinear()
-      .domain([0, d3.max(processedData, d => d.value)]).nice()
+      .domain([0, d3.max(data, d => d.value)]).nice()
       .range([height - margin.bottom, margin.top]);
 
     const xAxis = g => g
@@ -212,9 +211,9 @@ $(function () {
       const bisect = d3.bisector(d => d.date).left;
       return (mx) => {
         const date = x.invert(mx);
-        const index = bisect(processedData, date, 1);
-        const a = processedData[index - 1];
-        const b = processedData[index];
+        const index = bisect(data, date, 1);
+        const a = data[index - 1];
+        const b = data[index];
         return date - a.date > b.date - date ? b : a;
       };
     })();
@@ -226,7 +225,7 @@ $(function () {
       .call(yAxis);
 
     g.append("path")
-      .datum(processedData)
+      .datum(data)
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
@@ -236,7 +235,7 @@ $(function () {
 
     const tooltip = g.append("g");
 
-    svg.on("touchmove mousemove", function () {
+    g.on("touchmove mousemove", function () {
       const {
         date,
         value
@@ -261,7 +260,7 @@ $(function () {
 
     svg.on("touchend mouseleave", () => tooltip.call(callout, null));
 
-    console.log(processedData);
+    console.log(data);
   };
 
   const update = () => {
