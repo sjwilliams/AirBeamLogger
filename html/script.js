@@ -8,20 +8,20 @@ $(function () {
     return (celsius * (9 / 5)) + 32;
   };
 
-  const movingAverage = (values, N) => {
-    let i = 0;
-    let sum = 0;
-    const means = new Float64Array(values.length).fill(NaN);
-    for (let n = Math.min(N - 1, values.length); i < n; ++i) {
-      sum += values[i];
-    }
-    for (let n = values.length; i < n; ++i) {
-      sum += values[i];
-      means[i] = sum / N;
-      sum -= values[i - N + 1];
-    }
-    return means;
-  };
+  // const movingAverage = (values, N) => {
+  //   let i = 0;
+  //   let sum = 0;
+  //   const means = new Float64Array(values.length).fill(NaN);
+  //   for (let n = Math.min(N - 1, values.length); i < n; ++i) {
+  //     sum += values[i];
+  //   }
+  //   for (let n = values.length; i < n; ++i) {
+  //     sum += values[i];
+  //     means[i] = sum / N;
+  //     sum -= values[i - N + 1];
+  //   }
+  //   return means;
+  // };
 
   // Create AJAX functions to control the data logger.
   function start() {
@@ -114,7 +114,7 @@ $(function () {
 
   const updateChart = (data) => {
     const svg = d3.select("svg");
-    
+
 
     const margin = {
       top: 20,
@@ -144,15 +144,9 @@ $(function () {
       };
     });
 
-    // const x = d3.scaleTime()
-    //   .rangeRound([0, width]);
-
     const x = d3.scaleUtc()
       .domain(d3.extent(processedData, d => d.date))
       .range([margin.left, width - margin.right]);
-
-    // const y = d3.scaleLinear()
-    //   .rangeRound([height, 0]);
 
     const y = d3.scaleLinear()
       .domain([0, d3.max(processedData, d => d.value)]).nice()
@@ -171,15 +165,59 @@ $(function () {
         .attr("text-anchor", "start")
         .attr("font-weight", "bold")
         .text(data.y));
-        
+
     const line = d3.line()
       .defined(d => !isNaN(d.value))
       .x(d => x(d.date))
       .y(d => y(d.value));
 
+    const callout = (g, value) => {
+      if (!value) return g.style("display", "none");
 
+      g
+        .style("display", null)
+        .style("pointer-events", "none")
+        .style("font", "10px sans-serif");
 
+      const path = g.selectAll("path")
+        .data([null])
+        .join("path")
+        .attr("fill", "white")
+        .attr("stroke", "black");
 
+      const text = g.selectAll("text")
+        .data([null])
+        .join("text")
+        .call(text => text
+          .selectAll("tspan")
+          .data((value + "").split(/\n/))
+          .join("tspan")
+          .attr("x", 0)
+          .attr("y", (d, i) => `${i * 1.1}em`)
+          .style("font-weight", (_, i) => i ? null : "bold")
+          .text(d => d));
+
+      const {
+        x,
+        y,
+        width: w,
+        height: h
+      } = text.node().getBBox();
+
+      text.attr("transform", `translate(${-w / 2},${15 - y})`);
+      path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
+    };
+
+    const bisect = (() => {
+      const bisect = d3.bisector(d => d.date).left;
+      return (mx) => {
+        const date = x.invert(mx);
+        const index = bisect(processedData, date, 1);
+        const a = processedData[index - 1];
+        const b = processedData[index];
+        return date - a.date > b.date - date ? b : a;
+      };
+    })();
 
     g.append("g")
       .call(xAxis);
@@ -195,6 +233,33 @@ $(function () {
       .attr("stroke-linejoin", "round")
       .attr("stroke-linecap", "round")
       .attr("d", line);
+
+    const tooltip = g.append("g");
+
+    svg.on("touchmove mousemove", function () {
+      const {
+        date,
+        value
+      } = bisect(d3.mouse(this)[0]);
+      console.log('date', date);
+      tooltip
+        .attr("transform", `translate(${x(date)},${y(value)})`)
+        .call(callout, `${date.toLocaleString(undefined, 
+          {
+            month: "short", 
+            day: "numeric", 
+            year: "numeric", 
+            hour: "numeric", 
+            minute: "numeric", 
+            second: "numeric",
+            timeZoneName: "short",
+            // timeZone: "UTC"
+          }
+        )
+      }`);
+    });
+
+    svg.on("touchend mouseleave", () => tooltip.call(callout, null));
 
     console.log(processedData);
   };
