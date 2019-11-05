@@ -9,6 +9,8 @@ $(function () {
     return (celsius * (9 / 5)) + 32;
   };
 
+  const pollutants = ['pm25', 'pm10', 'pm1'];
+
   let serverRunning = false;
   let svg;
   let g;
@@ -62,6 +64,31 @@ $(function () {
     });
   };
 
+  const getMaxValueForAllTypes = (data) => {
+    let values = [];
+    pollutants.forEach((pollutant) => {
+      values = values.concat(getDataByPollutionType(pollutant, data));
+    });
+    return d3.max(values, d => d.value);
+  };
+
+  const getPollutantWithHighestValue = (data) => {
+    let highestSlug;
+    let highestValue;
+    pollutants.forEach((pollutant) => {
+      const value = d3.max(getDataByPollutionType(pollutant, data), d => d.value);
+      if(!highestValue || highestValue < value){
+        highestValue = value;
+        highestSlug = pollutant;
+      }
+    });
+
+    return {
+      slug: highestSlug,
+      value: highestValue
+    };
+  };
+
   const buildChart = (data) => {
     svg = d3.select("svg");
     width = +svg.attr("width") - margin.left - margin.right;
@@ -73,7 +100,7 @@ $(function () {
       .range([margin.left, width - margin.right]);
 
     y = d3.scaleLinear()
-      .domain([0, d3.max(getDataByPollutionType('pm25', data), d => d.value)]).nice() // todo: update to max of all pollution max values
+      .domain([0, getMaxValueForAllTypes(data)]).nice() // todo: update to max of all pollution max values
       .range([height - margin.bottom, margin.top]);
 
     xAxis = g => g
@@ -100,12 +127,12 @@ $(function () {
     gAxis = g.append("g")
       .attr("id", "axis");
 
-    gAxis.append("g")
+    gXAxis = gAxis.append("g")
       .attr("id", "axis-x")
       .attr("class", "x axis")
       .call(xAxis);
 
-    gAxis.append("g")
+    gYAxis = gAxis.append("g")
       .attr("id", "axis-y")
       .attr("class", "y axis")
       .call(yAxis);
@@ -210,23 +237,17 @@ $(function () {
     }
 
     x.domain(d3.extent(data, d => d.date));
-    y.domain([0, d3.max(getDataByPollutionType('pm25', data), d => d.value)]);
+    y.domain([0, d3.max(getDataByPollutionType(getPollutantWithHighestValue(data).slug, data), d => d.value)]);
 
-    // gXAxis
-    //   .transition()
-    //   .call(xAxis);
-    
-    // gYAxis
-    //   .transition()
-    //   .call(yAxis);
-
-    gAxis.select('#axis-x')
+    gXAxis
       .transition()
       .call(xAxis);
     
-    gAxis.select('#axis-y')
+    gYAxis
       .transition()
       .call(yAxis);
+
+
 
     pathPm25
       .datum(getDataByPollutionType('pm25', data))
