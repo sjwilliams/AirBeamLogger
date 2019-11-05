@@ -3,3 +3,14 @@ body {
   margin: 0 auto;
   font-family: Tahoma, Verdana, Arial, sans-serif;
 }
+
+
+svg .line{
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+
+
+}

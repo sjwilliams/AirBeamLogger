@@ -20,7 +20,9 @@ $(function () {
   let x;
   let y;
   let xAxis;
+  let gXAxis;
   let yAxis;
+  let gYAxis;
 
   const margin = {
     top: 20,
@@ -81,13 +83,42 @@ $(function () {
     yAxis = g => g
       .attr("transform", `translate(${margin.left},0)`)
       .call(d3.axisLeft(y))
-      .call(g => g.select(".domain").remove())
-      .call(g => g.select(".tick:last-of-type text").clone()
-        .attr("x", 3)
-        .attr("text-anchor", "start")
-        .attr("font-weight", "bold")
-        .text(data.y));
+      .call((g) => {
+        // todo: fix this
+        const text = g.select(".tick:last-of-type text");
+        if(text && text.clone){
+         text.clone()
+          .attr("x", 3)
+          .attr("text-anchor", "start")
+          .attr("font-weight", "bold")
+          .text(data.y);
+        }
+      });
 
+
+    // append axis
+    gAxis = g.append("g")
+      .attr("id", "axis");
+
+    gAxis.append("g")
+      .attr("id", "axis-x")
+      .attr("class", "x axis")
+      .call(xAxis);
+
+    gAxis.append("g")
+      .attr("id", "axis-y")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+    // append line charts
+    gLines = g.append("g")
+      .attr('id', 'lines');
+  
+    pathPm25 = gLines.append("path")
+      .datum(getDataByPollutionType('pm25', data))
+      .attr("id", "line-pm25")
+      .attr("class", "line line-pm25")
+      .attr("d", line);
 
     // tooltips
     const callout = (g, value) => {
@@ -168,31 +199,6 @@ $(function () {
     svg.on("touchend mouseleave", () => tooltip.call(callout, null));
 
 
-    // append axis
-    gAxis = g.append("g")
-      .attr('id', 'axis');
-
-    gAxis.append("g")
-      .attr('id', 'axis-x')
-      .call(xAxis);
-
-    gAxis.append("g")
-      .attr('id', 'axis-y')
-      .call(yAxis);
-
-    // append line charts
-    gLines = g.append("g")
-      .attr('id', 'lines');
-  
-    pathPm25 = gLines.append("path")
-      .datum(getDataByPollutionType('pm25', data))
-      .attr("id", "line-pm25")
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
-      .attr("stroke-linejoin", "round")
-      .attr("stroke-linecap", "round")
-      .attr("d", line);
 
   };
 
@@ -203,7 +209,29 @@ $(function () {
       buildChart(data);
     }
 
+    x.domain(d3.extent(data, d => d.date));
+    y.domain([0, d3.max(getDataByPollutionType('pm25', data), d => d.value)]);
 
+    // gXAxis
+    //   .transition()
+    //   .call(xAxis);
+    
+    // gYAxis
+    //   .transition()
+    //   .call(yAxis);
+
+    gAxis.select('#axis-x')
+      .transition()
+      .call(xAxis);
+    
+    gAxis.select('#axis-y')
+      .transition()
+      .call(yAxis);
+
+    pathPm25
+      .datum(getDataByPollutionType('pm25', data))
+      .transition()
+      .attr("d", line);
 
     console.log(data);
   };
@@ -224,7 +252,7 @@ $(function () {
         $clearBtn.attr('disabled', true);
       }
 
-      // setTimeout(update, 10000);
+      setTimeout(update, 2000);
     });
   };
 
