@@ -11,7 +11,9 @@
 </head>
 
 <body>
-  <h1>AirBeam Data Logger</h1>
+  <header>
+      <h1>AirBeam Data Logger</h1>
+  </header>  
 
   <section id="controls">
     <p><button id="start">Start Data Logger</button></p>
