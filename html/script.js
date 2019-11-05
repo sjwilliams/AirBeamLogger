@@ -16,7 +16,6 @@ $(function () {
   let g;
   let gAxis;
   let gLines;
-  let pathPm25;
   let width;
   let height;
   let x;
@@ -140,12 +139,15 @@ $(function () {
     // append line charts
     gLines = g.append("g")
       .attr('id', 'lines');
-  
-    pathPm25 = gLines.append("path")
-      .datum(getDataByPollutionType('pm25', data))
-      .attr("id", "line-pm25")
-      .attr("class", "line line-pm25")
-      .attr("d", line);
+    
+    pollutants.forEach((pollutant) => {
+      gLines.append("path")
+        .datum(getDataByPollutionType(pollutant, data))
+        .attr("id", `line-${pollutant}`)
+        .attr("class", `line line-${pollutant}`)
+        .attr("d", line);
+    });
+    
 
     // tooltips
     const callout = (g, value) => {
@@ -236,6 +238,8 @@ $(function () {
       buildChart(data);
     }
 
+    
+    // update axis
     x.domain(d3.extent(data, d => d.date));
     y.domain([0, d3.max(getDataByPollutionType(getPollutantWithHighestValue(data).slug, data), d => d.value)]);
 
@@ -247,12 +251,13 @@ $(function () {
       .transition()
       .call(yAxis);
 
-
-
-    pathPm25
-      .datum(getDataByPollutionType('pm25', data))
-      .transition()
-      .attr("d", line);
+    // update lines
+    pollutants.forEach((pollutant) => {
+      svg.select(`.line-${pollutant}`)
+        .datum(getDataByPollutionType(pollutant, data))
+        .transition()
+        .attr("d", line);
+    });
 
     console.log(data);
   };

@@ -15,9 +15,9 @@
 
   <section id="controls">
     <p><button id="start">Start Data Logger</button></p>
-    <p><button id="stop" disabled>Stop Data Logger</button></p>
-    <p><button id="clear" disabled>Clear Data</button></p>
-    <p><button id="shutdown">Shutdown</button></p>
+    <p><button id="stop" disabled>Stop Logging</button></p>
+    <p><button id="clear" disabled>Delete Data and Stop Logging</button></p>
+    <p><button id="shutdown">Shutdown Pi</button></p>
   
     <form id="settings">
       <p>
