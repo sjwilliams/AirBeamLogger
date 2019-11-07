@@ -104,8 +104,10 @@ $(function () {
 
   const buildChart = (data) => {
     svg = d3.select("svg");
-    width = +svg.attr("width") - margin.left - margin.right;
-    height = +svg.attr("height") - margin.top - margin.bottom;
+    const svgRect = svg.node().getBoundingClientRect();
+    console.log('boom', );
+    width = +svgRect.width - margin.left - margin.right;
+    height = +svgRect.height - margin.top - margin.bottom;
     g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     x = d3.scaleUtc()
