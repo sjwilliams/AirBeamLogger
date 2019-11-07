@@ -10,6 +10,36 @@ a{
   color: #fff;
 }
 
+ul.info{
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+ul.info li{
+  display: inline-block;
+  margin: 0;
+  list-style-type: none;
+  position: relative;
+  padding: 0 0 0 26px;
+}
+
+ul.info li:before{
+  display: inline-block;
+  position: absolute;
+  left: 14px;
+  content: "";
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  background-color: #495d73;
+  transition: 0.3s ease background-color;
+}
+
 header{
   display: flex;
   justify-content: space-between;
@@ -26,34 +56,18 @@ header h1{
   font-weight: 100;
 }
 
-header ul{
-  display: inline-flex;
-  align-items: center;
-  margin: 0;
-  padding: 0;
+header ul.info{
   font-size: 0.6rem;
-  line-height: 1;
-  text-transform: uppercase;
 }
 
 header li {
-  display: inline-block;
-  margin: 0;
   padding: 0 0 0 26px;
-  list-style-type: none;
-  position: relative;
 }
 
 header li:before{
-  display: inline-block;
-  position: absolute;
   left: 14px;
-  content: "";
   height: 8px;
   width: 8px;
-  border-radius: 50%;
-  background-color: #495d73;
-  transition: 0.3s ease background-color;
 }
 
 header li.active:before{
@@ -68,7 +82,71 @@ section{
   margin: 0 auto;
   max-width: 960px;
   width: 100%;
-  padding: 1rem 3rem;
+  padding: 3rem 3rem;
+}
+
+#measurements{
+  margin: 0 auto 3rem auto;
+  padding: 0;
+  display: table;
+}
+
+#measurements li{
+  padding: 0;
+  height: 110px;
+  width: 110px;
+  display: inline-block;
+  margin: 0 20px;
+  list-style-type: none;
+  position: relative;
+  background-color: #495d73;
+  border-radius: 50%;
+}
+
+#measurements li.threshold-0{
+  background-color: green;
+}
+
+#measurements li.threshold-1{
+  background-color: yellow;
+}
+
+#measurements li.threshold-1{
+  background-color: orange;
+}
+
+#measurements li.threshold-1{
+  background-color: red;
+}
+
+#measurements li span{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.6rem;
+}
+
+#measurements li:after{
+  content: '';
+  display: block;
+  position: absolute;
+  font-size: 1rem;
+  bottom: -1.7rem;
+  width: 100%;
+  text-align: center;
+}
+
+#measurements li#pm10:after{
+  content: 'PM10'
+}
+
+#measurements li#pm25:after{
+  content: 'PM2.5'
+}
+
+#measurements li#pm1:after{
+  content: 'PM1'
 }
 
 #chart{

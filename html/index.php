@@ -14,7 +14,7 @@
   <header>
       
       <h1>AirBeam Data Logger</h1>
-      <ul id="status" class="status">
+      <ul id="status" class="status info">
         <li id="status-pi">Pi</li>
         <li id="status-connected">AirBeam</li>
         <li id="status-logging">Logging</li>
@@ -22,6 +22,11 @@
   </header>  
 
   <section id="data">
+    <ul id="measurements" class="measurements">
+      <li id="pm10"><span></span></li>
+      <li id="pm25"><span></span></li>
+      <li id="pm1"><span></span></li>
+    </ul>
     <div id="chart">
       <svg width="960" height="500"></svg>
     </div>

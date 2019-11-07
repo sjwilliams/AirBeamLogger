@@ -17,7 +17,14 @@ $(function () {
     return (celsius * (9 / 5)) + 32;
   };
 
-  const pollutants = ['pm25', 'pm10', 'pm1'];
+  // const pollutants = ['pm25', 'pm10', 'pm1'];
+  const thresholds = {
+    'pm25': [12, 35, 55, 150],
+    'pm10': [20, 50, 100, 200],
+    'pm1': [12, 35, 55, 150]
+  };
+
+  const pollutants = Object.keys(thresholds);
 
   let svg;
   let g;
@@ -83,7 +90,7 @@ $(function () {
     let highestValue;
     pollutants.forEach((pollutant) => {
       const value = d3.max(getDataByPollutionType(pollutant, data), d => d.value);
-      if(!highestValue || highestValue < value){
+      if (!highestValue || highestValue < value) {
         highestValue = value;
         highestSlug = pollutant;
       }
@@ -119,12 +126,12 @@ $(function () {
       .call((g) => {
         // todo: fix this
         const text = g.select(".tick:last-of-type text");
-        if(text && text.clone){
-         text.clone()
-          .attr("x", 3)
-          .attr("text-anchor", "start")
-          .attr("font-weight", "bold")
-          .text(data.y);
+        if (text && text.clone) {
+          text.clone()
+            .attr("x", 3)
+            .attr("text-anchor", "start")
+            .attr("font-weight", "bold")
+            .text(data.y);
         }
       });
 
@@ -146,7 +153,7 @@ $(function () {
     // append line charts
     gLines = g.append("g")
       .attr('id', 'lines');
-    
+
     pollutants.forEach((pollutant) => {
       gLines.append("path")
         .datum(getDataByPollutionType(pollutant, data))
@@ -154,7 +161,7 @@ $(function () {
         .attr("class", `line line-${pollutant}`)
         .attr("d", line);
     });
-    
+
 
     // tooltips
     const callout = (g, value) => {
@@ -242,7 +249,7 @@ $(function () {
       buildChart(data);
     }
 
-    
+
     // update axis
     x.domain(d3.extent(data, d => d.date));
     y.domain([0, d3.max(getDataByPollutionType(getPollutantWithHighestValue(data).slug, data), d => d.value)]);
@@ -250,29 +257,59 @@ $(function () {
     gXAxis
       .transition()
       .call(xAxis);
-    
+
     gYAxis
       .transition()
       .call(yAxis);
 
-    // update lines
-    pollutants.forEach((pollutant) => {
-      svg.select(`.line-${pollutant}`)
-        .datum(getDataByPollutionType(pollutant, data))
-        .transition()
-        .attr("d", line);
+
+    // remove background colors from callouts
+    $('#measurements li').removeClass(function(index, cssClass){
+      return (cssClass.match(/^threshold-\d+$/) || []).join(' ');
     });
 
-    console.log(data);
+    pollutants.forEach((pollutant) => {
+      const dataForPollutant = getDataByPollutionType(pollutant, data);
+
+      // update lines
+      svg.select(`.line-${pollutant}`)
+        .datum(dataForPollutant)
+        .transition()
+        .attr("d", line);
+
+      /**
+       * Update callout values and background colors
+       */
+      
+       const currentValue = +dataForPollutant[dataForPollutant.length - 1].value;
+      
+      const $item = $(`#${pollutant}`);
+      $('span', $item).html(currentValue);
+
+      // for background color, default to highest threshold color, but then search for a better one.
+      let currentThreshold = thresholds[pollutant].length - 1; 
+
+      for (let index = 0; index < thresholds[pollutant].length; index++) {
+        const value = thresholds[pollutant][index];
+        if (currentValue < value) {
+          currentThreshold = index;
+          break;
+        }
+      }
+
+      $item.addClass(`threshold-${currentThreshold}`);
+    });
+
+    console.log('update chart');
   };
 
   async function getChartData() {
     const response = await requestJson('/get_data.php');
-    
+
     if (!!response.data) {
       updateChart(response.data);
     }
-    
+
     setTimeout(getChartData, 60 * 1000);
   }
 
