@@ -11,7 +11,6 @@ $(function () {
 
   const pollutants = ['pm25', 'pm10', 'pm1'];
 
-  let serverRunning = false;
   let svg;
   let g;
   let gAxis;
@@ -262,23 +261,15 @@ $(function () {
     console.log(data);
   };
 
-  const update = () => {
-    // $startBtn
-    // $stopBtn
+  const getChartData = () => {
     d3.json("/get_data.php").then(function (json) {
       const hasData = !!json.data;
 
       if (hasData) {
-        $clearBtn.removeAttr('disabled');
-        $stopBtn.removeAttr('disabled');
-        $startBtn.attr('disabled', true);
-        console.log($startBtn);
         updateChart(json.data);
-      } else {
-        $clearBtn.attr('disabled', true);
       }
-
-      setTimeout(update, 2000);
+      
+      setTimeout(getChartData, 60 * 1000);
     });
   };
 
@@ -384,5 +375,5 @@ $(function () {
   $clearBtn.on('click', clear_data);
   $shutdownBtn.on('click', start_shutdown);
 
-  update();
+  getChartData();
 });

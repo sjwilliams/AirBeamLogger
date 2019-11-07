@@ -12,13 +12,26 @@
 
 <body>
   <header>
+      
       <h1>AirBeam Data Logger</h1>
+      <ul id="status" class="status">
+        <li id="status-pi">Pi</li>
+        <li id="status-connected">AirBeam</li>
+        <li id="status-logging">Logging</li>
+      </ul>
   </header>  
+
+  <section id="data">
+    <div id="chart">
+      <svg width="960" height="500"></svg>
+    </div>
+    <p><a href="output.csv">Data File</a></p>
+  </section>
 
   <section id="controls">
     <p><button id="start">Start Data Logger</button></p>
-    <p><button id="stop" disabled>Stop Logging</button></p>
-    <p><button id="clear" disabled>Delete Data and Stop Logging</button></p>
+    <p><button id="stop">Stop Logging</button></p>
+    <p><button id="clear">Delete Data and Stop Logging</button></p>
     <p><button id="shutdown">Shutdown Pi</button></p>
   
     <form id="settings">
@@ -39,17 +52,9 @@
     </form>
   </section>
 
-
-  <section id="data">
-    <div id="chart">
-      <svg width="960" height="500"></svg>
-    </div>
-    <p><a href="output.csv">Data File</a></p>
-  </section>
-
-
   <script src="jquery.min.js"></script>
   <script src="d3.js"></script>
-  <script src="script.js"></script>
+  <script src="chart.js"></script>
+  <script src="status.js"></script>
 </body>
 </html>
