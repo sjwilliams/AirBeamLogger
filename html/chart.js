@@ -1,9 +1,17 @@
-$(function () {
+function requestJson(url, options = {}) {
+  return fetch(url, options)
+    .then(response => response.json())
+    .then(jsonResponse => {
+      return jsonResponse;
+    })
+    .catch((error) => {
+      return {
+        errors: [error.message]
+      };
+    });
+}
 
-  const $startBtn = $('#start');
-  const $stopBtn = $('#stop');
-  const $clearBtn = $('#clear');
-  const $shutdownBtn = $('#shutdown');
+$(function () {
 
   const celsius2fahrenheit = (celsius) => {
     return (celsius * (9 / 5)) + 32;
@@ -225,9 +233,6 @@ $(function () {
     });
 
     svg.on("touchend mouseleave", () => tooltip.call(callout, null));
-
-
-
   };
 
   const updateChart = (rawData) => {
@@ -261,119 +266,15 @@ $(function () {
     console.log(data);
   };
 
-  const getChartData = () => {
-    d3.json("/get_data.php").then(function (json) {
-      const hasData = !!json.data;
-
-      if (hasData) {
-        updateChart(json.data);
-      }
-      
-      setTimeout(getChartData, 60 * 1000);
-    });
-  };
-
-  // Create AJAX functions to control the data logger.
-  function start() {
-    $.ajax({
-      type: 'POST',
-      data: {
-        time: Math.round($.now() / 1000)
-      },
-      url: 'start.php',
-      success: function (data) {
-        alert(data);
-      },
-      error: function (xhr) {
-        alert("error");
-      }
-    });
-  }
-
-  function stop() {
-    $.ajax({
-      type: 'POST',
-      data: {},
-      url: 'stop.php',
-      success: function (data) {
-        alert(data);
-      },
-      error: function (xhr) {
-        alert("error");
-      }
-    });
-  }
-
-  function clear_data() {
-    $.ajax({
-      type: 'POST',
-      data: {},
-      url: 'clear.php',
-      success: function (data) {
-        alert(data);
-      },
-      error: function (xhr) {
-        alert("error");
-      }
-    });
-  }
-
-  function start_shutdown() {
-    $.ajax({
-      type: 'POST',
-      data: {},
-      url: 'shutdown.php',
-      success: function (data) {
-        alert(data);
-      },
-      error: function (xhr) {
-        alert("error");
-      }
-    });
-  }
-
-  function update_settings(setting) {
-    if (Math.floor($("#delay").val()) > 0 && Math.floor($("#delay").val()) <= 1440) {
-      var use_date = 0;
-      if ($("#date").prop('checked')) {
-        use_date = 1;
-      }
-      var use_ntp = 0;
-      if ($("#ntp").prop('checked')) {
-        use_ntp = 1;
-      }
-
-      $.ajax({
-        type: 'POST',
-        data: {
-          type: setting,
-          ntp: use_ntp,
-          delay: Math.floor($("#delay").val()) * 60,
-          date: use_date
-        },
-        url: 'update_settings.php',
-        success: function (data) {
-          alert(data);
-        },
-        error: function (xhr) {
-          alert("error");
-        }
-      });
+  async function getChartData() {
+    const response = await requestJson('/get_data.php');
+    
+    if (!!response.data) {
+      updateChart(response.data);
     }
+    
+    setTimeout(getChartData, 60 * 1000);
   }
-
-
-
-  // Disable form submission, it's all handled via JavaScript.
-  $('#settings').submit(function (e) {
-    e.preventDefault();
-    return false;
-  });
-
-  $startBtn.on('click', start);
-  $stopBtn.on('click', stop);
-  $clearBtn.on('click', clear_data);
-  $shutdownBtn.on('click', start_shutdown);
 
   getChartData();
 });

@@ -1,3 +1,18 @@
+function requestJson(url, options = {}) {
+  return fetch(url, options)
+    .then(response => response.json())
+    .then(jsonResponse => {
+      return jsonResponse;
+    })
+    .catch((error) => {
+      return {
+        errors: [error.message]
+      };
+    });
+}
+
+
+
 $(function () {
 
   // Create AJAX functions to control the data logger.
@@ -45,7 +60,7 @@ $(function () {
     });
   }
 
-  function start_shutdown() {
+  function shutdown() {
     $.ajax({
       type: 'POST',
       data: {},
@@ -89,8 +104,6 @@ $(function () {
     }
   }
 
-
-
   // Disable form submission, it's all handled via JavaScript.
   $('#settings').submit(function (e) {
     e.preventDefault();
@@ -106,29 +119,27 @@ $(function () {
 
   $startBtn.on('click', start);
   $stopBtn.on('click', stop);
+  $shutdownBtn.on('click', shutdown);
   $clearBtn.on('click', clear_data);
-  $shutdownBtn.on('click', start_shutdown);
 
-  const getStatusData = async () => {
+
+
+  async function setStatus() {
     const status = {
       pi: false,
       logging: false,
       connected: false
     };
 
-    const response = await fetch("/get_status.php");
+    const serverStatus = await requestJson('/get_status.php');
 
-    if (!response.ok) {
-      console.log(response);
-    } else {
-      const json = await response.json();
-      if (json.data) {
-        status.pi = true;
-        status.logging = json.data.logging;
-        status.connected = json.data.connected;
-      }
+    if (!!serverStatus.data) {
+      status.pi = true;
+      status.logging = serverStatus.data.logging;
+      status.connected = serverStatus.data.connected;
     }
 
+    // update status lights in nav
     Object.keys(status).forEach((k) => {
       const $el = $(`#status-${k}`);
       if (!!status[k]) {
@@ -138,8 +149,9 @@ $(function () {
       }
     });
 
-    setTimeout(getStatusData, 1000);
-  };
+    console.log(serverStatus);
+    setTimeout(setStatus, 1000);
+  }
 
-  getStatusData();
+  setStatus();
 });
