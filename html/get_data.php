@@ -1,5 +1,6 @@
 <?php
 $file="output.csv";
+$maxNumberOfRecords = 1000;
 
 if( file_exists($file) && ($fp = fopen($file, "rb"))!==false ) {
   $csv = file_get_contents($file);
@@ -19,9 +20,14 @@ if( file_exists($file) && ($fp = fopen($file, "rb"))!==false ) {
     return $newData;
   }
   
+  $data = array_map('remapData', $all);
+  
+  // only return recent data
+  $data = (count($data) > $maxNumberOfRecords ? array_slice($data, $maxNumberOfRecords * -1) : $data);
+
   $jsonData = json_encode([
     'meta' => array('time' => date("Y/m/d g:i:s")),
-    'data' => array_map('remapData', $all)
+    'data' => $data
   ]);
 } else {
   $jsonData = json_encode([
