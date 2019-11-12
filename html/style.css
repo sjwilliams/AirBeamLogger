@@ -159,6 +159,7 @@ section{
 
 #chart{
   /* background-color: #272727; */
+  display: none;
 }
 
 #chart svg{

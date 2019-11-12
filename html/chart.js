@@ -39,6 +39,8 @@ $(function () {
   let yAxis;
   let gYAxis;
 
+  const $chart = $('#chart');
+
   const margin = {
     top: 20,
     right: 20,
@@ -309,6 +311,7 @@ $(function () {
     const response = await requestJson('/get_data.php');
 
     if (!!response.data) {
+      $chart.show();
       updateChart(response.data);
     }
 

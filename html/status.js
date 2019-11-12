@@ -149,7 +149,7 @@ $(function () {
       }
     });
 
-    console.log(serverStatus);
+    console.log('status', status);
     setTimeout(setStatus, 1000);
   }
 
