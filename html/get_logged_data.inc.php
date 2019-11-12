@@ -11,14 +11,11 @@ class LoggedData {
 
    function get_data($maxNumber = 1000)
    {
-      // cache
       if($this->fileExists){
 
-        if(!$this->csv){
-          $this->csv = file_get_contents($this->file);
-        }
+        $csv = $this->get_csv();
 
-        $all = array_map("str_getcsv", explode("\n", $this->csv)); // csv to array
+        $all = array_map("str_getcsv", explode("\n", $csv)); // csv to array
         $this->properties = array_map('trim', $all[0]); // first row has column names
         array_shift($all); // remove column names, leaving just records
         array_pop($all); // the last line from the CSV is blank, so let's remove that record, too
@@ -90,7 +87,15 @@ class LoggedData {
 
   function get_csv()
   {
-    return $this->csv;
+    $csv = "";
+
+    if($this->fileExists){
+      if(!$this->csv){
+        $this->csv = file_get_contents($this->file);
+      }
+      $csv = $this->csv;
+    } 
+    return $csv;
   }
 }
 ?>

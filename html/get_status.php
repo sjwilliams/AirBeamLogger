@@ -1,10 +1,11 @@
 <?php
-  exec("ps aux | grep /home/pi/data_logger.py | grep -v grep", $output, $loggerRunning);
-  exec("ls -ltr /dev|grep -i ttyACM0", $output, $serialConnected);
+  include "logger.inc.php";
+  $logger = new Logger();
+  
   $jsonData = json_encode([
     'data' => array(
-      'logging' => $loggerRunning === 0,
-      'connected' => $serialConnected === 0
+      'logging' =>$logger->isRunning(),
+      'connected' => $logger->isConnected()
     )
   ]);
   print_r($jsonData);
