@@ -5,7 +5,8 @@
   $jsonData = json_encode([
     'data' => array(
       'logging' =>$logger->isRunning(),
-      'connected' => $logger->isConnected()
+      'connected' => $logger->isConnected(),
+      'snapshots' => $logger->getSnapshots()
     )
   ]);
   print_r($jsonData);

@@ -318,5 +318,5 @@ $(function () {
     setTimeout(getChartData, 60 * 1000);
   }
 
-  getChartData();
+  // getChartData();
 });

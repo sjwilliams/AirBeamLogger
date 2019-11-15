@@ -87,7 +87,7 @@ class LoggedData {
 
   function get_csv()
   {
-    $csv = "";
+    $csv;
 
     if($this->fileExists){
       if(!$this->csv){

@@ -19,15 +19,12 @@ $(function () {
   function start() {
     $.ajax({
       type: 'POST',
-      data: {
-        time: Math.round($.now() / 1000)
-      },
       url: 'start.php',
       success: function (data) {
-        alert(data);
+        console.log(data);
       },
       error: function (xhr) {
-        alert("error");
+        console.log("error");
       }
     });
   }
@@ -38,27 +35,42 @@ $(function () {
       data: {},
       url: 'stop.php',
       success: function (data) {
-        alert(data);
+        console.log(data);
       },
       error: function (xhr) {
-        alert("error");
+        console.log("error");
       }
     });
   }
 
-  function clear_data() {
+  function snapshot() {
     $.ajax({
       type: 'POST',
       data: {},
-      url: 'clear.php',
+      url: 'snapshot.php',
       success: function (data) {
-        alert(data);
+        // console.log(data);
+        console.log(data);
       },
       error: function (xhr) {
-        alert("error");
+        console.log("error");
       }
     });
   }
+
+  // function clear_data() {
+  //   $.ajax({
+  //     type: 'POST',
+  //     data: {},
+  //     url: 'clear.php',
+  //     success: function (data) {
+  //       console.log(data);
+  //     },
+  //     error: function (xhr) {
+  //       console.log("error");
+  //     }
+  //   });
+  // }
 
   function shutdown() {
     $.ajax({
@@ -66,63 +78,30 @@ $(function () {
       data: {},
       url: 'shutdown.php',
       success: function (data) {
-        alert(data);
+        console.log(data);
       },
       error: function (xhr) {
-        alert("error");
+        console.log("error");
       }
     });
   }
 
-  function update_settings(setting) {
-    if (Math.floor($("#delay").val()) > 0 && Math.floor($("#delay").val()) <= 1440) {
-      var use_date = 0;
-      if ($("#date").prop('checked')) {
-        use_date = 1;
-      }
-      var use_ntp = 0;
-      if ($("#ntp").prop('checked')) {
-        use_ntp = 1;
-      }
-
-      $.ajax({
-        type: 'POST',
-        data: {
-          type: setting,
-          ntp: use_ntp,
-          delay: Math.floor($("#delay").val()) * 60,
-          date: use_date
-        },
-        url: 'update_settings.php',
-        success: function (data) {
-          alert(data);
-        },
-        error: function (xhr) {
-          alert("error");
-        }
-      });
-    }
-  }
-
-  // Disable form submission, it's all handled via JavaScript.
-  $('#settings').submit(function (e) {
-    e.preventDefault();
-    return false;
-  });
-
 
   const $startBtn = $('#start');
   const $stopBtn = $('#stop');
-  const $clearBtn = $('#clear');
+  // const $clearBtn = $('#clear');
   const $shutdownBtn = $('#shutdown');
+  const $snapshot = $('#snapshot');
 
 
   $startBtn.on('click', start);
   $stopBtn.on('click', stop);
   $shutdownBtn.on('click', shutdown);
-  $clearBtn.on('click', clear_data);
+  $snapshot.on('click', snapshot);
+  // $clearBtn.on('click', clear_data);
 
 
+  const $snapshots = $('#snapshots');
 
   async function setStatus() {
     const status = {
@@ -131,12 +110,18 @@ $(function () {
       connected: false
     };
 
+    let snapshots = [];
+
     const serverStatus = await requestJson('/get_status.php');
 
     if (!!serverStatus.data) {
       status.pi = true;
       status.logging = serverStatus.data.logging;
       status.connected = serverStatus.data.connected;
+
+      if(serverStatus.data.snapshots && serverStatus.data.snapshots.length > 0){
+        snapshots = serverStatus.data.snapshots;
+      }
     }
 
     // update status lights in nav
@@ -148,6 +133,19 @@ $(function () {
         $el.removeClass('active').addClass('inactive');
       }
     });
+
+
+    if(snapshots.length){
+      console.log(snapshots);
+      $snapshots.show();
+      const $ul = $snapshots.find('ul').empty();
+
+      snapshots.forEach((link) => {
+        $ul.append(`<li><a href="snapshots/${link}">${link}</a></li>`);
+      });
+    } else {
+      $snapshots.hide();
+    }
 
     console.log('status', status);
     setTimeout(setStatus, 1000);

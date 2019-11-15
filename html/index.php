@@ -1,7 +1,3 @@
-<?php
-	// Load JSON settings from file.
-	$settings = json_decode(file_get_contents("/home/pi/settings.json"), true);
-?>
 <!DOCTYPE html>
 <html>
 
@@ -32,10 +28,16 @@
     </div>
   </section>
 
+  <section id="snapshots">
+    <ul>
+      
+    </ul>
+  </section>
+
   <section id="controls">
-    <p><button id="start">Start Data Logger</button></p>
-    <p><button id="stop">Stop Logging</button></p>
-    <p><button id="clear">Delete Data and Stop Logging</button></p>
+    <p><button id="start">Start</button></p>
+    <p><button id="stop">Stop</button></p>
+    <p><button id="snapshot">Snapshot</button></p>
     <p><button id="shutdown">Shutdown Pi</button></p>
   </section>
 
