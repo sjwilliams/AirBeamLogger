@@ -58,20 +58,6 @@ $(function () {
     });
   }
 
-  // function clear_data() {
-  //   $.ajax({
-  //     type: 'POST',
-  //     data: {},
-  //     url: 'clear.php',
-  //     success: function (data) {
-  //       console.log(data);
-  //     },
-  //     error: function (xhr) {
-  //       console.log("error");
-  //     }
-  //   });
-  // }
-
   function shutdown() {
     $.ajax({
       type: 'POST',
@@ -89,7 +75,6 @@ $(function () {
 
   const $startBtn = $('#start');
   const $stopBtn = $('#stop');
-  // const $clearBtn = $('#clear');
   const $shutdownBtn = $('#shutdown');
   const $snapshot = $('#snapshot');
 
@@ -98,8 +83,6 @@ $(function () {
   $stopBtn.on('click', stop);
   $shutdownBtn.on('click', shutdown);
   $snapshot.on('click', snapshot);
-  // $clearBtn.on('click', clear_data);
-
 
   const $snapshots = $('#snapshots');
 
@@ -110,9 +93,16 @@ $(function () {
       connected: false
     };
 
-    let snapshots = [];
+    const buttonStates = {
+      start: true,
+      stop: false,
+      snapshot: false,
+      shutdown: true
+    };
 
+    
     const serverStatus = await requestJson('/get_status.php');
+    let snapshots = [];
 
     if (!!serverStatus.data) {
       status.pi = true;
@@ -133,21 +123,34 @@ $(function () {
         $el.removeClass('active').addClass('inactive');
       }
     });
+    
+    // enable and disable buttons as needed
+    Object.keys(buttonStates).forEach((k) => {
+      const $button = $(`button#${k}`);
 
+      if(buttonStates[k]){
+        $button.removeAttr('disabled');
+      } else {
+        $button.attr('disabled', true);
+      }
+    });
 
+    // show snapshot downloads
     if(snapshots.length){
-      console.log(snapshots);
       $snapshots.show();
-      const $ul = $snapshots.find('ul').empty();
+      const $table = $snapshots.find('table');
 
-      snapshots.forEach((link) => {
-        $ul.append(`<li><a href="snapshots/${link}">${link}</a></li>`);
+      snapshots.forEach((snapshot) => {
+        const $row = $table.find(`#file-${snapshot.basename}`);
+        if(!$row.length){
+          $table.append(`<tr id="file-${snapshot.basename}"><td><a href="snapshots/${snapshot.name}">${snapshot.name}</a></td><td>${snapshot.size}</td></tr>`);
+        }
       });
     } else {
       $snapshots.hide();
     }
 
-    console.log('status', status);
+    // console.log('status', status);
     setTimeout(setStatus, 1000);
   }
 

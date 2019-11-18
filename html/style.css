@@ -82,9 +82,54 @@ section{
   margin: 0 auto;
   max-width: 960px;
   width: 100%;
-  padding: 3rem 3rem;
+  padding: 1rem 3rem;
 }
 
+button {
+	box-shadow:inset 0px 1px 0px 0px #54a3f7;
+	background:linear-gradient(to bottom, #007dc1 5%, #0061a7 100%);
+	background-color:#007dc1;
+	border-radius:8px;
+	border:1px solid #124d77;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:13px;
+	padding:12px 20px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #154682;
+}
+button:hover {
+	background:linear-gradient(to bottom, #0061a7 5%, #007dc1 100%);
+	background-color:#0061a7;
+}
+button:active {
+	position:relative;
+	top:1px;
+}
+
+button[disabled]{
+  background: linear-gradient(to bottom, #495d73 5%, #495d73 100%);
+  border: 1px solid black;
+  box-shadow: inset 0px 1px 0px 0px #545454;
+  color: #ccc;
+  font-style: italic;
+  pointer-events: none;
+}
+
+table{
+
+}
+
+th{
+  text-align: left;
+}
+
+td{
+  padding: 10px;
+  background-color: #2a3644;
+}
 #measurements{
   margin: 0 0 3rem 0;
   padding: 0;
@@ -101,6 +146,10 @@ section{
   position: relative;
   background-color: #495d73;
   border-radius: 50%;
+}
+
+#measurements li:first-child{
+  margin-left: 0;
 }
 
 @media only screen and (min-width: 600px) {

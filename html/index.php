@@ -17,22 +17,7 @@
       </ul>
   </header>  
 
-  <section id="data">
-    <ul id="measurements" class="measurements">
-      <li id="pm10"><span></span></li>
-      <li id="pm25"><span></span></li>
-      <li id="pm1"><span></span></li>
-    </ul>
-    <div id="chart">
-      <svg></svg>
-    </div>
-  </section>
 
-  <section id="snapshots">
-    <ul>
-      
-    </ul>
-  </section>
 
   <section id="controls">
     <p><button id="start">Start</button></p>
@@ -41,9 +26,35 @@
     <p><button id="shutdown">Shutdown Pi</button></p>
   </section>
 
+  <section id="data">
+    <h2>Real-time Measurements</h2>
+    <ul id="measurements" class="measurements">
+      <li id="pm10"><span></span></li>
+      <li id="pm25"><span></span></li>
+      <li id="pm1"><span></span></li>
+    </ul>
+  </section>
+
+  <section id="snapshots">
+    <h2>Download Data</h2>
+    <table>
+      <tr>
+        <th>
+          Name
+        </th>
+        <th>
+          Size
+        </th>
+      </tr>
+
+    </table>
+  </section>
+
+
+
   <script src="jquery.min.js"></script>
   <script src="d3.js"></script>
-  <script src="chart.js"></script>
+  <script src="data.js"></script>
   <script src="status.js"></script>
 </body>
 </html>

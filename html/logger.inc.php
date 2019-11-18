@@ -46,12 +46,14 @@
     }
 
     function getSnapshots(){
-      // $files = array_diff(scandir($this->snapshotDir), array('.', '..'));
       $files = array();
       foreach (new DirectoryIterator($this->snapshotDir) as $file) {
-        if ($file->isFile()) {
-            // print $file->getFilename() . "\n";
-            array_push($files, $file->getFilename());
+        if ($file->isFile() && $file->getExtension() === "csv") {
+            array_push($files, array(
+              "name" => $file->getFilename(),
+              "basename" => $file->getBasename(".csv"),
+              "size" => $file->getSize()
+            ));
         }
       }
 
