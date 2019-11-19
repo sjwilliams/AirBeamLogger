@@ -17,43 +17,49 @@ $(function () {
 
   // Create AJAX functions to control the data logger.
   function start() {
+    consoleLog('Starting Logger');
+
     $.ajax({
       type: 'POST',
       url: 'start.php',
       success: function (data) {
-        console.log(data);
+        consoleLog(data);
       },
       error: function (xhr) {
-        console.log("error");
+        consoleLog("Start error");
       }
     });
   }
 
   function stop() {
+    consoleLog('Stopping Logger');
+
     $.ajax({
       type: 'POST',
       data: {},
       url: 'stop.php',
       success: function (data) {
-        console.log(data);
+        consoleLog(`${data}`);
       },
       error: function (xhr) {
-        console.log("error");
+        consoleLog("Stop error");
       }
     });
   }
 
   function snapshot() {
+    consoleLog('Starting Snapshot');
+
     $.ajax({
       type: 'POST',
       data: {},
       url: 'snapshot.php',
       success: function (data) {
-        // console.log(data);
         console.log(data);
+        consoleLog(`Generated Snapshot: ${data}`);
       },
       error: function (xhr) {
-        console.log("error");
+        consoleLog("Snapshot error");
       }
     });
   }
@@ -64,14 +70,24 @@ $(function () {
       data: {},
       url: 'shutdown.php',
       success: function (data) {
-        console.log(data);
+        consoleLog(data);
       },
       error: function (xhr) {
-        console.log("error");
+        consoleLog("Shutdown error");
       }
     });
   }
 
+  const $console = $('#console');
+
+  function consoleLog(msg){
+    const $msg = $(`<li>$ ${msg}</li>`);
+    $console.find('ul').prepend($msg);
+
+    setTimeout(function(){
+      $msg.remove();
+    }, 3000);
+  }
 
   const $startBtn = $('#start');
   const $stopBtn = $('#stop');
@@ -94,10 +110,10 @@ $(function () {
     };
 
     const buttonStates = {
-      start: true,
+      start: false,
       stop: false,
       snapshot: false,
-      shutdown: true
+      shutdown: false
     };
 
     
@@ -114,6 +130,19 @@ $(function () {
       }
     }
 
+    // update button states
+    if(status.pi){
+      buttonStates.shutdown = true;
+      if(status.connected){
+        if(status.logging){
+          buttonStates.stop = true;
+          buttonStates.snapshot = true;
+        } else {
+          buttonStates.start = true;
+        }
+      }
+    }
+
     // update status lights in nav
     Object.keys(status).forEach((k) => {
       const $el = $(`#status-${k}`);
@@ -123,11 +152,11 @@ $(function () {
         $el.removeClass('active').addClass('inactive');
       }
     });
-    
-    // enable and disable buttons as needed
+
+
+    // enable and disable buttons in UI as needed
     Object.keys(buttonStates).forEach((k) => {
       const $button = $(`button#${k}`);
-
       if(buttonStates[k]){
         $button.removeAttr('disabled');
       } else {

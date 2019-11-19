@@ -27,7 +27,7 @@ $(function () {
   const pollutants = Object.keys(thresholds);
   const parseTime = d3.timeParse("%Y/%m/%d %H:%M:%S");
 
-  const prepChartData = (rawData) => {
+  const prepRawData = (rawData) => {
     return rawData.map((d) => {
       const celsius = parseInt(d['Temperature (C)']);
       return {
@@ -53,7 +53,7 @@ $(function () {
 
 
   const update = (rawData) => {
-    const data = prepChartData(rawData);
+    const data = prepRawData(rawData);
 
     // remove background colors from callouts
     $('#measurements li').removeClass(function(index, cssClass){

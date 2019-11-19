@@ -1,5 +1,5 @@
 <?php
   include "logger.inc.php";
   $logger = new Logger();
-  $logger->start();
+  echo $logger->start();
 ?>

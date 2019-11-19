@@ -5,19 +5,21 @@
     return str_replace(':', '-', str_replace(" ", '-', strtolower(trim(str_replace("/", '', $string)))));
   }
 
-  
+  function exists($file){
+    return file_exists($file) && ($fp = fopen($file, "rb"))!==false;
+  }
 
   class Logger {
     function __construct()
     {
        $this->log = new LoggedData(); 
 
-       $this->snapshotDir = "./snapshots/";
+       $this->snapshotDir = realpath("./snapshots");
     }
 
     function hasLog()
     {
-      return $this->log->fileExists && $this->log->get_length() > 0;
+      return $this->log->logFileExists() && $this->log->get_length() > 0;
     }
 
     function isRunning()
@@ -35,13 +37,15 @@
     function stop(){
       if($this->isRunning()){
         exec('sudo pkill -f "python3 /home/pi/data_logger.py"');
-        $this->snapshot();
+        $snapMsg = $this->snapshot();
+        return $snapMsg . "<br> Logger Stopped";
       }
     }
 
     function start(){
       if(!$this->isRunning() && $this->isConnected()){
         exec("sudo python3 /home/pi/data_logger.py > /dev/null &");
+        return "Logger Started";
       }
     }
 
@@ -65,18 +69,26 @@
         $restart = $this->isRunning();
         $first = $this->log->get_first();
         $last = $this->log->get_last();
-        $archiveFilename = slugifyTime($first['Time'])."_".slugifyTime($last['Time']).".csv";
+        $archiveFilename = gethostname() . "_" . slugifyTime($first['Time'])."_".slugifyTime($last['Time']).".csv";
         
         $this->stop();
-        rename("output.csv", "{$this->snapshotDir}{$archiveFilename}");
+        rename($this->log->file, "{$this->snapshotDir}/{$archiveFilename}");
+
+        if(exists('/home/pi/output.csv')){
+          exec("sudo rm /home/pi/output.csv");
+        }
+
+        if(exists('/var/www/html/output.csv')){
+          exec("sudo rm /var/www/html/output.csv");
+        }
 
         if($restart){
           $this->start();
         }
 
-        return $archiveFilename;
+        return $archiveFilename . " created";
       } else {
-        return "No log";
+        return "No log to snapshot";
       }
     }
   }

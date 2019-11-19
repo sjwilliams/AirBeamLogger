@@ -2,14 +2,13 @@
 <html>
 
 <head>
-  <title>AirBeam</title>
+  <title>AirBeam - <?php echo gethostname() ?></title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
   <header>
-      
-      <h1>AirBeam Data Logger</h1>
+      <h1>Logger: <?php echo gethostname() ?></h1>
       <ul id="status" class="status info">
         <li id="status-pi">Pi</li>
         <li id="status-connected">AirBeam</li>
@@ -26,17 +25,25 @@
     <p><button id="shutdown">Shutdown Pi</button></p>
   </section>
 
+  <section id="console">
+    <ul>
+      
+    </ul>
+  </section>
+
   <section id="data">
-    <h2>Real-time Measurements</h2>
+    <h2>Currently</h2>
     <ul id="measurements" class="measurements">
       <li id="pm10"><span></span></li>
       <li id="pm25"><span></span></li>
       <li id="pm1"><span></span></li>
     </ul>
+
+    <p><a href="output.csv">Download</a></p>
   </section>
 
   <section id="snapshots">
-    <h2>Download Data</h2>
+    <h2>Archive Data</h2>
     <table>
       <tr>
         <th>
@@ -54,7 +61,7 @@
 
   <script src="jquery.min.js"></script>
   <script src="d3.js"></script>
-  <script src="data.js"></script>
+  <!-- <script src="data.js"></script> -->
   <script src="status.js"></script>
 </body>
 </html>

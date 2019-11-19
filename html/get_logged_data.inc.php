@@ -5,13 +5,17 @@ class LoggedData {
 
    function __construct($file = "output.csv")
    {
-       $this->file = $file;
-       $this->fileExists = file_exists($file) && ($fp = fopen($file, "rb"))!==false;             
+       $this->file = realpath($file);
    }
+
+   function logFileExists()
+  {
+    return file_exists($this->file) && ($fp = fopen($this->file, "rb"))!==false;
+  }
 
    function get_data($maxNumber = 1000)
    {
-      if($this->fileExists){
+      if($this->logFileExists()){
 
         $csv = $this->get_csv();
 
@@ -87,10 +91,10 @@ class LoggedData {
 
   function get_csv()
   {
-    $csv;
+    $csv = '';
 
-    if($this->fileExists){
-      if(!$this->csv){
+    if($this->logFileExists()){
+      if(!isset($this->csv)){
         $this->csv = file_get_contents($this->file);
       }
       $csv = $this->csv;

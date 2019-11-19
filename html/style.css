@@ -130,6 +130,18 @@ td{
   padding: 10px;
   background-color: #2a3644;
 }
+
+#console ul{
+  background-color: black;
+  /* min-height: 1rem; */
+}
+
+#console li{
+  font-family: 'Courier New', Courier, monospace;
+  list-style-type: none;
+  padding: 10px 0;
+}
+
 #measurements{
   margin: 0 0 3rem 0;
   padding: 0;
