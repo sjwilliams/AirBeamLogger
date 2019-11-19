@@ -1,3 +1,6 @@
+import {log} from './utils.js';
+
+
 function requestJson(url, options = {}) {
   return fetch(url, options)
     .then(response => response.json())
@@ -12,43 +15,42 @@ function requestJson(url, options = {}) {
 }
 
 
-
 $(function () {
 
   // Create AJAX functions to control the data logger.
   function start() {
-    consoleLog('Starting Logger');
+    log('Starting Logger');
 
     $.ajax({
       type: 'POST',
       url: 'start.php',
       success: function (data) {
-        consoleLog(data);
+        log(data);
       },
       error: function (xhr) {
-        consoleLog("Start error");
+        log("Start error");
       }
     });
   }
 
   function stop() {
-    consoleLog('Stopping Logger');
+    log('Stopping Logger');
 
     $.ajax({
       type: 'POST',
       data: {},
       url: 'stop.php',
       success: function (data) {
-        consoleLog(`${data}`);
+        log(`${data}`);
       },
       error: function (xhr) {
-        consoleLog("Stop error");
+        log("Stop error");
       }
     });
   }
 
   function snapshot() {
-    consoleLog('Starting Snapshot');
+    log('Starting Snapshot');
 
     $.ajax({
       type: 'POST',
@@ -56,37 +58,28 @@ $(function () {
       url: 'snapshot.php',
       success: function (data) {
         console.log(data);
-        consoleLog(`Generated Snapshot: ${data}`);
+        log(`Generated Snapshot: ${data}`);
       },
       error: function (xhr) {
-        consoleLog("Snapshot error");
+        log("Snapshot error");
       }
     });
   }
 
   function shutdown() {
+    log('Starting Shutdown');
+
     $.ajax({
       type: 'POST',
       data: {},
       url: 'shutdown.php',
       success: function (data) {
-        consoleLog(data);
+        log(data);
       },
       error: function (xhr) {
-        consoleLog("Shutdown error");
+        log("Shutdown error");
       }
     });
-  }
-
-  const $console = $('#console');
-
-  function consoleLog(msg){
-    const $msg = $(`<li>$ ${msg}</li>`);
-    $console.find('ul').prepend($msg);
-
-    setTimeout(function(){
-      $msg.remove();
-    }, 3000);
   }
 
   const $startBtn = $('#start');
@@ -94,11 +87,24 @@ $(function () {
   const $shutdownBtn = $('#shutdown');
   const $snapshot = $('#snapshot');
 
+  const $advanced = $('#advanced');
 
   $startBtn.on('click', start);
   $stopBtn.on('click', stop);
   $shutdownBtn.on('click', shutdown);
   $snapshot.on('click', snapshot);
+
+  $('.advanced-reveal').on('click', function(){
+    const $el = $(this);
+
+    if($advanced.hasClass('active')){
+      $advanced.removeClass('active');
+      $el.html('Show');
+    } else {
+      $advanced.addClass('active');
+      $el.html('Hide');
+    }
+  });
 
   const $snapshots = $('#snapshots');
 
@@ -121,13 +127,16 @@ $(function () {
     let snapshots = [];
 
     if (!!serverStatus.data) {
+      
       status.pi = true;
       status.logging = serverStatus.data.logging;
       status.connected = serverStatus.data.connected;
-
+      
       if(serverStatus.data.snapshots && serverStatus.data.snapshots.length > 0){
         snapshots = serverStatus.data.snapshots;
       }
+
+      window.AIRBEAM_STATUS = status;
     }
 
     // update button states

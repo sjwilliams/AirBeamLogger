@@ -23,24 +23,31 @@
     <ul></ul>
   </section>
 
-  <section id="controls">
-    <p><button id="start">Start</button></p>
-    <p><button id="stop">Stop</button></p>
-    <p><button id="snapshot">Snapshot</button></p>
-    <p><button id="shutdown">Shutdown Pi</button></p>
-  </section>
-
-
-
   <section id="data">
-    <h2>Current Measurements</h2>
     <ul id="measurements" class="measurements">
       <li id="pm10"><span></span></li>
       <li id="pm25"><span></span></li>
       <li id="pm1"><span></span></li>
     </ul>
     
-    <p><a href="output.csv">Download Data</a></p>
+  </section>
+
+  <section id="controls">
+    <p><button id="start">Start</button></p>
+    <p><button id="stop">Stop</button></p>
+    <p><a class="button" href="output.csv">Download Data</a></p>
+    
+  </section>
+
+  <section id="advanced" class="advanced">
+    <h3>Advanced</h3>
+    <div class="advanced-inner">
+      <p><button class="advanced-reveal">Show</button></p>
+      <div class="advanced-list">
+        <p><button id="snapshot">Snapshot</button></p>
+        <p><button class="button-alert" id="shutdown">Shutdown Pi</button></p>
+      </div>
+    </div>
   </section>
 
   <section id="snapshots">
@@ -54,10 +61,9 @@
   </section>
 
 
-
   <script src="jquery.min.js"></script>
   <script src="d3.js"></script>
-  <script src="data.js"></script>
-  <script src="status.js"></script>
+  <script src="status.js" type="module"></script>
+  <script src="data.js" type="module"></script>
 </body>
 </html>

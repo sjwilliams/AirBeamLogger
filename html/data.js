@@ -1,3 +1,5 @@
+import {log, isLogging } from './utils.js';
+
 function requestJson(url, options = {}) {
   return fetch(url, options)
     .then(response => response.json())
@@ -12,7 +14,6 @@ function requestJson(url, options = {}) {
 }
 
 $(function () {
-
   const celsius2fahrenheit = (celsius) => {
     return (celsius * (9 / 5)) + 32;
   };
@@ -25,9 +26,9 @@ $(function () {
   };
 
   const pollutants = Object.keys(thresholds);
-  const parseTime = d3.timeParse("%Y/%m/%d %H:%M:%S");
-
+  
   const prepRawData = (rawData) => {
+    const parseTime = d3.timeParse("%Y/%m/%d %H:%M:%S");
     return rawData.map((d) => {
       const celsius = parseInt(d['Temperature (C)']);
       return {
@@ -55,10 +56,7 @@ $(function () {
   const update = (rawData) => {
     const data = prepRawData(rawData);
 
-    // remove background colors from callouts
-    $('#measurements li').removeClass(function(index, cssClass){
-      return (cssClass.match(/^threshold-\d+$/) || []).join(' ');
-    });
+
 
     pollutants.forEach((pollutant) => {
       const dataForPollutant = getDataByPollutionType(pollutant, data);
@@ -81,7 +79,12 @@ $(function () {
       $item.addClass(`threshold-${currentThreshold}`);
     });
 
-    console.log('update chart');
+    const lastRecord = jQuery.extend({}, data[0]);
+    const recordDate = new Date(lastRecord.date).toLocaleString(undefined, {});
+    // $data.find('h2 span').html(`${recordDate}`);
+
+    // delete lastRecord.date;
+    log(`Logger: ${recordDate}: ${JSON.stringify(lastRecord)}`);
   };
 
   const $data = $('#data');
@@ -89,16 +92,16 @@ $(function () {
   async function getData() {
     const response = await requestJson('/get_data.php?limit=1');
 
-    if (!!response.data) {
-      if($('#status-logging').hasClass('active')){
-        $data.show();
-      }
+    // remove background colors from callouts
+    $('#measurements li').removeClass(function(index, cssClass){
+      return (cssClass.match(/^threshold-\d+$/) || []).join(' ');
+    });
+
+    if (!!response.data && isLogging()) {
       update(response.data);
-    } else {
-      $data.hide();
     }
 
-    setTimeout(getData, 10 * 1000);
+    setTimeout(getData, 5 * 1000);
   }
 
   getData();

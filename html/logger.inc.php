@@ -9,6 +9,11 @@
     return file_exists($file) && ($fp = fopen($file, "rb"))!==false;
   }
 
+  // sort snapshots by name
+  function snapshotSorter($a, $b){
+    return strcmp($a["basename"], $b["basename"]);
+  }
+
   class Logger {
     function __construct()
     {
@@ -51,6 +56,7 @@
 
     function getSnapshots(){
       $files = array();
+
       foreach (new DirectoryIterator($this->snapshotDir) as $file) {
         if ($file->isFile() && $file->getExtension() === "csv") {
             array_push($files, array(
@@ -61,6 +67,7 @@
         }
       }
 
+      usort($files, "snapshotSorter");
       return $files;
     }
 
