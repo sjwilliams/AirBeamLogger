@@ -6,8 +6,17 @@ body {
   color: #fff;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 a{
   color: #fff;
+}
+
+h2{
+  margin-top: 0;
+  font-size: 1.3rem;
 }
 
 ul.info{
@@ -54,6 +63,7 @@ header h1{
   line-height: 1;
   font-size: 1rem;
   font-weight: 100;
+  max-width: 90px;
 }
 
 header ul.info{
@@ -82,7 +92,7 @@ section{
   margin: 0 auto;
   max-width: 960px;
   width: 100%;
-  padding: 1rem 3rem;
+  padding: 1rem 1rem 0 1rem;
 }
 
 button {
@@ -133,13 +143,19 @@ td{
 
 #console ul{
   background-color: black;
-  /* min-height: 1rem; */
+  display: block;
+  min-height: 90px;
+  overflow-y: scroll;
 }
 
 #console li{
   font-family: 'Courier New', Courier, monospace;
   list-style-type: none;
   padding: 10px 0;
+}
+
+#data{
+  display: none;
 }
 
 #measurements{
@@ -150,8 +166,8 @@ td{
 
 #measurements li{
   padding: 0;
-  height: 60px;
-  width: 60px;
+  height: 40px;
+  width: 40px;
   display: inline-block;
   margin: 0 10px;
   list-style-type: none;
@@ -164,13 +180,6 @@ td{
   margin-left: 0;
 }
 
-@media only screen and (min-width: 600px) {
-  #measurements li{
-    height: 110px;
-    width: 110px;
-    margin: 0 20px;
-  }
-}
 
 #measurements li.threshold-0{
   background-color: green;
@@ -193,7 +202,7 @@ td{
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 2.6rem;
+  font-size: 0.8rem;
 }
 
 #measurements li:after{
@@ -218,31 +227,15 @@ td{
   content: 'PM1'
 }
 
-#chart{
-  /* background-color: #272727; */
-  display: none;
-}
 
-#chart svg{
-  width: 100%;
-  height: 500px;
-}
+@media only screen and (min-width: 600px) {
+  #measurements li{
+    height: 110px;
+    width: 110px;
+    margin: 0 20px;
+  }
 
-.line{
-  fill: none;
-  stroke: black;
-  stroke-width: 1.5;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-}
-.line-pm25{
-  stroke: red;
-}
-
-.line-pm10{
-  stroke:yellow;
-}
-
-.line-pm1{
-  stroke:green;
+  #measurements li span{
+    font-size: 2.6rem;
+  }
 }

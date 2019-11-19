@@ -1,6 +1,6 @@
 <?php
 $file="output.csv";
-$maxNumberOfRecords = 1000;
+$maxNumberOfRecords = $_GET["limit"] ? htmlspecialchars($_GET["limit"]) : 1000;
 
 if( file_exists($file) && ($fp = fopen($file, "rb"))!==false ) {
   $csv = file_get_contents($file);

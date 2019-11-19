@@ -87,16 +87,18 @@ $(function () {
   const $data = $('#data');
 
   async function getData() {
-    const response = await requestJson('/get_data.php');
+    const response = await requestJson('/get_data.php?limit=1');
 
     if (!!response.data) {
-      $data.show();
+      if($('#status-logging').hasClass('active')){
+        $data.show();
+      }
       update(response.data);
     } else {
       $data.hide();
     }
 
-    setTimeout(getData, 60 * 1000);
+    setTimeout(getData, 10 * 1000);
   }
 
   getData();
