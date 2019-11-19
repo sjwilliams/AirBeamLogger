@@ -54,6 +54,16 @@
       }
     }
 
+    function shutdown(){
+      if(exists('/home/pi/shutdown.sh')){
+        $this->stop();
+        exec("/home/pi/shutdown.sh > /dev/null &");
+        return "Shutting Down";
+      } else {
+        return "No Shutdown Script Found";
+      }
+    }
+
     function getSnapshots(){
       $files = array();
 

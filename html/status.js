@@ -119,7 +119,8 @@ $(function () {
       start: false,
       stop: false,
       snapshot: false,
-      shutdown: false
+      shutdown: false,
+      download: false
     };
 
     
@@ -146,6 +147,7 @@ $(function () {
         if(status.logging){
           buttonStates.stop = true;
           buttonStates.snapshot = true;
+          buttonStates.download = true;
         } else {
           buttonStates.start = true;
         }
@@ -165,7 +167,7 @@ $(function () {
 
     // enable and disable buttons in UI as needed
     Object.keys(buttonStates).forEach((k) => {
-      const $button = $(`button#${k}`);
+      const $button = $(`#${k}`);
       if(buttonStates[k]){
         $button.removeAttr('disabled');
       } else {

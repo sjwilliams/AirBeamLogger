@@ -1,4 +1,5 @@
 <?php
-exec("/home/pi/shutdown.sh > /dev/null &");
-echo("Shutting Down");
+  include "logger.inc.php";
+  $logger = new Logger();
+  echo $logger->shutdown();
 ?>

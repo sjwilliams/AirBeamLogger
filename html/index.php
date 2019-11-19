@@ -35,7 +35,7 @@
   <section id="controls">
     <p><button id="start">Start</button></p>
     <p><button id="stop">Stop</button></p>
-    <p><a class="button" href="output.csv">Download Data</a></p>
+    <p><a id="download" class="button" href="output.csv">Download Data</a></p>
     
   </section>
 
