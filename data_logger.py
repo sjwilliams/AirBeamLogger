@@ -53,14 +53,14 @@ while 1:
 			if use_date == 1:
 				if (newfile):
 					# Write first line of new file
-					output.write("Time, Temperature (C), %RH, PM1, PM2.5, PM10\r\n")
-				output.write(time.strftime("%Y/%m/%d %H:%M:%S") + "," + data[15] + "," + data[17] + "," + data[19] + "," + data[21] + "," + data[23] + "\r\n")
+					output.write("Time, Temperature (C), %RH, PM1, PM2.5, PM10, MAC\r\n")
+				output.write(time.strftime("%Y/%m/%d %H:%M:%S") + "," + data[15] + "," + data[17] + "," + data[19] + "," + data[21] + "," + data[23] + "," + data[8] + "\r\n")
 			else:
 				if (newfile):
 					# Write first line of new file
-					output.write("Timepoint, Temperature (C), %RH, PM1, PM2.5, PM10\r\n")
+					output.write("Timepoint, Temperature (C), %RH, PM1, PM2.5, PM10, MAC\r\n")
 				timepoint = (counter * delay) / 60
-				output.write(str(timepoint) + "," + data[15] + "," + data[17] + "," + data[19] + "," + data[21] + "," + data[23] + "\r\n")
+				output.write(str(timepoint) + "," + data[15] + "," + data[17] + "," + data[19] + "," + data[21] + "," + data[23] + "," + data[8] + "\r\n")
 		# Copy output to server directory.
 		shutil.copy(output_path, server_path)
 	counter += 1

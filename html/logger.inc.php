@@ -86,7 +86,7 @@
         $restart = $this->isRunning();
         $first = $this->log->get_first();
         $last = $this->log->get_last();
-        $archiveFilename = gethostname() . "_" . slugifyTime($first['Time'])."_".slugifyTime($last['Time']).".csv";
+        $archiveFilename = gethostname() . "_" . $first['MAC'] . "_" . slugifyTime($first['Time'])."_".slugifyTime($last['Time']).".csv";
         
         $this->stop();
         rename($this->log->file, "{$this->snapshotDir}/{$archiveFilename}");
