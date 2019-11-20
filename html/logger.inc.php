@@ -49,8 +49,9 @@
 
     function start(){
       if(!$this->isRunning() && $this->isConnected()){
+        $snapMsg = $this->snapshot(); // in case of a previous failure, save data before we start a new session
         exec("sudo python3 /home/pi/data_logger.py > /dev/null &");
-        return "Logger Started";
+        return $snapMsg . "<br> Logger Started";
       }
     }
 
